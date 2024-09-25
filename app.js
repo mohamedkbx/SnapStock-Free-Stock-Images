@@ -1,17 +1,24 @@
 const auth = "ZtgWwvbqcBHQzJawHDJ3gRszvsLXg3k3smARsiicN9J61pcJod5q5Ejf";
 const gallery = document.querySelector(".gallery");
 const searchInput = document.querySelector(".search-input");
-// const searchBtn = document.querySelector(".search-btn");
 const form = document.querySelector(".search-form");
+let page = 1;
+const more = document.querySelector(".more");
+let fetchLink;
 let searchValue;
-
+let currentSearch;
 //event listeners
 searchInput.addEventListener("input", updateInput);
 form.addEventListener("submit", (e) => {
   e.preventDefault();
+  currentSearch = searchValue;
   if (!searchValue) return;
   searchPhoto(searchValue);
 });
+// load more event
+more.addEventListener("click", loadMore);
+
+// functions
 
 function updateInput(e) {
   searchValue = e.target.value;
@@ -45,7 +52,8 @@ function generatePictures(data) {
 }
 
 async function curatedPhotos() {
-  const data = await fetchApi("https://api.pexels.com/v1/curated?per_page=15&page=1");
+  fetchLink = "https://api.pexels.com/v1/curated?per_page=15&page=1";
+  const data = await fetchApi(fetchLink);
   //   data.photos.forEach((photo) => {
   //     const galleryImg = document.createElement("div");
   //     galleryImg.classList.add("gallery-img");
@@ -59,15 +67,25 @@ async function curatedPhotos() {
 
 async function searchPhoto(query) {
   clear();
-  const data = await fetchApi(
-    `https://api.pexels.com/v1/search?query=${query}+query&per_page=15&page=1`
-  );
+  fetchLink = `https://api.pexels.com/v1/search?query=${query}+query&per_page=15&page=1`;
+  const data = await fetchApi(fetchLink);
   generatePictures(data);
 }
 
 function clear() {
   gallery.innerHTML = "";
   searchInput.value = "";
+}
+
+async function loadMore() {
+  page++;
+  if (currentSearch) {
+    fetchLink = `https://api.pexels.com/v1/search?query=${currentSearch}+query&per_page=15&page=${page}`;
+  } else {
+    fetchLink = `https://api.pexels.com/v1/curated?per_page=15&page=${page}`;
+  }
+  const data = await fetchApi(fetchLink);
+  generatePictures(data);
 }
 
 curatedPhotos();
