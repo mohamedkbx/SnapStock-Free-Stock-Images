@@ -49,3 +49,20 @@ header h2 {
   color: white;
   cursor: pointer;
 }
+
+.gallery-img {
+}
+
+.gallery-info {
+  display: flex;
+  align-items: center;
+  color: gray;
+}
+
+.gallery-info a {
+  color: gray;
+}
+
+.gallery-info a:hover {
+  color: black;
+}
